@@ -1,10 +1,10 @@
 # Site settings
-title: 贺剑峰的博客
-SEOTitle: 贺剑峰的博客 | hjfrun blog
+title: 原上草
+SEOTitle: 原上草的博客 | hjfrun blog
 header-img: img/home-bg.jpg
-email: huxpro@gmail.com
+email: hjf@hjfrun.com
 description: "浙江大学12级研究生，iOS开发"
-keyword: "贺剑峰, 贺剑峰的博客, hjfrun, hjfrun blog"
+keyword: "原上草, 原上草的博客, hjfrun, hjfrun blog"
 url: "https://hjfrun.com"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
@@ -90,10 +90,10 @@ service-worker: true
 # Friends
 friends: [
     {
-        title: "乱写占位",
-        href: "http://su.gallery/"
+        title: "阿新",
+        href: "http://xiaoxinxin.me/"
     },{
-        title: "乱写",
+        title: "乱写占位",
         href: "http://mida.re/"
     }
 ]

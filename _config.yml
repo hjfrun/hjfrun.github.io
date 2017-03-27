@@ -1,6 +1,6 @@
 # Site settings
 title: 贺剑峰的博客
-SEOTitle: 贺剑峰的博客 | hjfrun Blog
+SEOTitle: 贺剑峰的博客 | hjfrun blog
 header-img: img/home-bg.jpg
 email: huxpro@gmail.com
 description: "浙江大学12级研究生，iOS开发"
@@ -90,10 +90,10 @@ service-worker: true
 # Friends
 friends: [
     {
-        title: "Su",
+        title: "乱写占位",
         href: "http://su.gallery/"
     },{
-        title: "乱序",
+        title: "乱写",
         href: "http://mida.re/"
     }
 ]

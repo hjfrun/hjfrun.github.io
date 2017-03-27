@@ -3,8 +3,8 @@ title: 贺剑峰的博客
 SEOTitle: 贺剑峰的博客 | hjfrun Blog
 header-img: img/home-bg.jpg
 email: huxpro@gmail.com
-description: "关于前端与设计、黑客与画家 | 黄玄，Web & Mobile Lover，Front-End Engineer，UX Designer | 这里是 @Hux黄玄 的个人博客，与你一起发现更大的世界。"
-keyword: "黄玄, Hux黄玄, Hux, 鬼栈, huxpro, @huxpro, 黄玄的博客, Hux Blog, 博客, 个人网站, 互联网, 前端, 设计, 产品, 肖玉, Lynn, 肖玉的男朋友"
+description: "浙江大学12级研究生，iOS开发"
+keyword: "贺剑峰, 贺剑峰的博客, hjfrun, hjfrun blog"
 url: "https://hjfrun.com"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
@@ -51,9 +51,9 @@ kramdown:
 #disqus_username: _your_disqus_short_name_
 
 # Duoshuo settings
-duoshuo_username: huxblog
+#duoshuo_username: huxblog
 # Share component is depend on Comment so we can NOT use share only.
-duoshuo_share: true                     # set to false if you want to use Comment without Sharing
+#duoshuo_share: true                     # set to false if you want to use Comment without Sharing
 
 
 
@@ -71,7 +71,7 @@ ga_domain: hjfrun.com
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "爱代码，爱生活，<br>加油努力向前"
-sidebar-avatar: /img/avatar-hux.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: /img/avatar-hjfrun.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 

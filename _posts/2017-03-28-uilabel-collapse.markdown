@@ -16,7 +16,7 @@ tags:
 
 效果如下图：
 
-![collapse label](https://github.com/hjfrun/hjfrun.github.io/blob/master/img/collapse%20label.gif)
+![collapse label](https://github.com/hjfrun/hjfrun.github.io/blob/master/img/collapse-label.gif)
 
 
 

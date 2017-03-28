@@ -5,7 +5,7 @@ subtitle:   ""
 date:       2017-03-27 23:36:35
 author:     hjfrun
 header-img: "img/post-bg-2015.jpg"
-catalog: true
+catalog: false
 tags:
     - 生活
 ---

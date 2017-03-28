@@ -1,0 +1,25 @@
+---
+layout:     post
+title:      再出发
+subtitle:   ""
+date:       2017-03-27 23:36:35
+author:     hjfrun
+header-img: "img/post-bg-2015.jpg"
+catalog: false
+tags:
+    - 生活
+---
+
+> “Yeah It's on. ”
+
+
+
+之前还在学校的时候，就在狗爹注册过这个域名，还在[hhmember](http://hhmembers.net/)买了空间。那个时候还是用WordPress做的博客。后来那个博客纯粹只是用来记了点流水账。去年域名到期了就没有再续费了。前几天想到再把这个域名弄回来，发现可以重新注册。就在腾讯云注册了下。这个域名终于又回到我的掌控之中了。
+
+现在的这个博客是用GitHub pages托管的。省去了自己去买空间。挺方便。开始想用hexo生成网页内容，后来发现要多机更新内容很麻烦。现在是用的GitHub pages + jekyll。域名在[腾讯云](www.qclound.com)注册的。主题是fork[黄玄](http://huangxuan.me)博客的。
+
+这个博客应该还是以技术为主吧，好记性不如烂笔头，再偶尔记录记录生活。这里最后会成什么样子，和大家一起拭目以待吧。
+
+加油。现在好好上路！
+
+

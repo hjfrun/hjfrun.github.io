@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      NSTimer相关知识点
-subtitle:   ""
+subtitle:   
 date:       2017-03-29 14:09:35
 author:     "hjfrun"
 header-img: ""
@@ -10,8 +10,6 @@ tags:
     - iOS
     - 学习
 ---
-
-
 
 
 

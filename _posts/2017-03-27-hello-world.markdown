@@ -1,9 +1,9 @@
 ---
 layout:     post
-title:      "Hello World"
-subtitle:   "Hello World, Hello Blog"
+title:      再出发
+subtitle:   ""
 date:       2017-03-27 23:36:35
-author:     "hjfrun"
+author:     hjfrun
 header-img: "img/post-bg-2015.jpg"
 catalog: true
 tags:
@@ -11,6 +11,10 @@ tags:
 ---
 
 > “Yeah It's on. ”
+
+
+
+之前还在学校的时候，就注册过这个域名，在狗爹买的，还买了空间。那个时候还是用WordPress管理的博客。那个博客纯粹只是用来记了点流水账。去年域名到期了就没有再续费了。前几天想到再把这个域名弄回来，发现可以重新注册。就在腾讯云注册了下。这个域名终于又回到我的掌控之中了。
 
 
 

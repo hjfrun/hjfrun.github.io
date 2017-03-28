@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      NSTimer相关知识点
+title:      NSTimer简单梳理
 subtitle:   
 date:       2017-03-29 14:09:35
 author:     "hjfrun"
@@ -10,7 +10,6 @@ tags:
     - iOS
     - 学习
 ---
-
 
 
 **NSTimer**定时器是```Foundation```框架提供的常用对象，也是iOS开发中最常用到的定时器。当然了，iOS开发中还有别的定时器，比如**CADisplayLink**和**GCD**定时器。后两种在这里暂不做讨论，今天梳理下最常用的**NSTimer**定时器。
@@ -103,9 +102,7 @@ tags:
 跟上面iOS 10API的一样，这里就不重复了。
 
 
-
 我们项目里面都是用的[MSWeakTimer](https://github.com/mindsnacks/MSWeakTimer)，这是一个线程安全的Timer，不会对target进行retain操作，支持GCD Queue，支持Pod引入，使用方便。
-
 
 
 #### 其他注意事项
@@ -119,5 +116,4 @@ tags:
 简单的就梳理这么多，后续可能还会完善。。。
 
 
-
-参考Demo代码链接https://github.com/hjfrun/NSTimerDemo
+参考Demo代码链接[NSTimerDemo](https://github.com/hjfrun/NSTimerDemo)

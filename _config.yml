@@ -90,10 +90,10 @@ service-worker: true
 # Friends
 friends: [
     {
+        title: "吴迪",
+        href: "http://vendyblog.cn/"
+    },{
         title: "阿新",
         href: "http://xiaoxinxin.me/"
-    },{
-        title: "乱写占位",
-        href: "http://mida.re/"
     }
 ]

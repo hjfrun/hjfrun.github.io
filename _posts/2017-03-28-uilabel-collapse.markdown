@@ -16,7 +16,11 @@ tags:
 
 效果如下图：
 
+<!--
 ![](/img/in-post/collapse-label.gif)
+-->
+<br>
+<div align=center><img width="375" height="667" src="/img/in-post/collapse-label.gif"/></div>
 
 
 

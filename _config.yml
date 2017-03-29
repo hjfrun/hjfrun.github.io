@@ -48,12 +48,11 @@ kramdown:
     - autolink
     - footnotes
     - smart
-  enable_coderay: false
-  syntax_highlighter: rouge
-  coderay:
-    coderay_line_numbers: inline
-    coderay_line_numbers_start: 1
-
+#  enable_coderay: false
+#  syntax_highlighter: rouge
+#  coderay_line_numbers: inline
+#  coderay_line_number_start: 1
+  
 # Disqus settings
 #disqus_username: _your_disqus_short_name_
 

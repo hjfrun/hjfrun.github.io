@@ -39,6 +39,7 @@ free(ivars);
 
 ![](/img/in-post/textview-placeholder-1.png)
 
+
 可以看得出来还真有一个内部的_placeholderLabel。我们只需要把这个使用起来就可以了。
 
 使用方法：
@@ -60,9 +61,11 @@ label.font = [UIFont systemFontOfSize:13.f];
 这是一开始想到的方法。后来发现，还有更简单的方法或许可以查看到一个类的内部变量。
 
 调试的时候打断点就可以了。
-
+<br>
+<!--
 ![](/img/in-post/textview-placeholder-2.png)
-
+-->
+<img width = "200" height = "300" src = "/img/in-post/textview-placeholder-2.png"/>
 
 
 需要说明的是，这种方法只在iOS8之后的系统有效。iOS7和之前的，还是要自己添加，然后监听文本通知等传统繁琐的方法。这里就不写了。别人的实现已经太多了。

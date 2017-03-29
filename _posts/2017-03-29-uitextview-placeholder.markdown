@@ -37,7 +37,7 @@ free(ivars);
 
 执行效果：
 
-![](../img/in-post/textview-placeholder-1.png)
+![](/img/in-post/textview-placeholder-1.png)
 
 可以看得出来还真有一个内部的_placeholderLabel。我们只需要把这个使用起来就可以了。
 
@@ -61,7 +61,7 @@ label.font = [UIFont systemFontOfSize:13.f];
 
 调试的时候打断点就可以了。
 
-![](../img/in-post/textview-placeholder-2.png)
+![](/img/in-post/textview-placeholder-2.png)
 
 
 

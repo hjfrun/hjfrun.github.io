@@ -65,7 +65,7 @@ label.font = [UIFont systemFontOfSize:13.f];
 <!--
 ![](/img/in-post/textview-placeholder-2.png)
 -->
-<img width = "200" height = "300" src = "/img/in-post/textview-placeholder-2.png"/>
+<img width = "300" height = "500" src = "/img/in-post/textview-placeholder-2.png"/>
 
 
 需要说明的是，这种方法只在iOS8之后的系统有效。iOS7和之前的，还是要自己添加，然后监听文本通知等传统繁琐的方法。这里就不写了。别人的实现已经太多了。

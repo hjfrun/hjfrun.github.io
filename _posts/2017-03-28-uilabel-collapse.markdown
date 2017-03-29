@@ -16,7 +16,7 @@ tags:
 
 效果如下图：
 
-![](/img/collapse-label.gif)
+![](/img/in-post/collapse-label.gif)
 
 
 

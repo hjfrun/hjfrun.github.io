@@ -61,7 +61,7 @@ label.font = [UIFont systemFontOfSize:13.f];
 
 调试的时候打断点就可以了。
 
-![](../img/in-post/textview-placeholder-1.png)
+![](/img/in-post/textview-placeholder-2.png)
 
 
 

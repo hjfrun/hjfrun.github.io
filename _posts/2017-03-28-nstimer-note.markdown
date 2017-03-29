@@ -18,7 +18,7 @@ tags:
 
 #### 基本用法
 
-```objective-c
+```objc
 + (NSTimer *)timerWithTimeInterval:(NSTimeInterval)ti target:(id)aTarget selector:(SEL)aSelector userInfo:(nullable id)userInfo repeats:(BOOL)yesOrNo;
 + (NSTimer *)scheduledTimerWithTimeInterval:(NSTimeInterval)ti target:(id)aTarget selector:(SEL)aSelector userInfo:(nullable id)userInfo repeats:(BOOL)yesOrNo;
 ```
@@ -29,7 +29,7 @@ tags:
 
 上面两种方法都是任务放到selector中，时间到了再去执行。至iOS 10之后，又添加了两个新方法，把任务封装到了block中去。使用起来更加方便。而且，官方注释写得很清楚，新的API可以规避蛋疼的循环引用问题。但是这个API只在
 
-```objective-c
+```objc
 + (NSTimer *)timerWithTimeInterval:(NSTimeInterval)interval repeats:(BOOL)repeats block:(void (^)(NSTimer *timer))block API_AVAILABLE(macosx(10.12), ios(10.0), watchos(3.0), tvos(10.0));
 
 /// - parameter:  block  The execution body of the timer; the timer itself is passed as the parameter to this block when executed to aid in avoiding cyclical references
@@ -38,7 +38,7 @@ tags:
 
 
 
-```objective-c
+```objc
 - (void)timerWithBlock
 {
     __weak typeof(self) weakSelf = self;
@@ -76,13 +76,13 @@ tags:
 
 **NSTimer+WeakTimer.h**
 
-```objective-c
+```objc
 + (NSTimer *)weakScheduledTimerWithTimeInterval:(NSTimeInterval)interval repeats:(BOOL)repeats block:(void (^)(NSTimer *timer))block;
 ```
 
 **NSTimer+WeakTimer.m**
 
-```objective-c
+```objc
 + (NSTimer *)weakScheduledTimerWithTimeInterval:(NSTimeInterval)interval repeats:(BOOL)repeats block:(void (^)(NSTimer *))block
 {
     return [self scheduledTimerWithTimeInterval:interval target:self selector:@selector(blockHandler:) userInfo:[block copy] repeats:repeats];

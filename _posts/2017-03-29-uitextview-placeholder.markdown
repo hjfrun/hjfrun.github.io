@@ -40,7 +40,7 @@ free(ivars);
 <!--
 ![](/img/in-post/textview-placeholder-1.png)
 -->
-<img width = "700" height = "240" src = "/img/in-post/textview-placeholder-1.png"/>
+<img width = "800" height = "240" src = "/img/in-post/textview-placeholder-1.png"/>
 
 可以看得出来还真有一个内部的_placeholderLabel。我们只需要把这个使用起来就可以了。
 

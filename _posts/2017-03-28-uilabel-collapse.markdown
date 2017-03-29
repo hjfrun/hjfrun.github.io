@@ -24,7 +24,7 @@ tags:
 
 
 
-```objective-c
+```objc
 // 使用以下方法把string拆分为一行行文本数组，size参数为给的一行文本框大小
 - (NSArray *)splitWithString:(NSString *)string size:(CGSize)size
 {

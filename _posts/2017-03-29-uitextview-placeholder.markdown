@@ -43,7 +43,7 @@ unsigned int output = 0;
 
 使用方法：
 
-```objective_c
+```objc
 UILabel *label = [[UILabel alloc] init];
 label.text = @"占位文字";
 label.textColor = [UIColor redColor];

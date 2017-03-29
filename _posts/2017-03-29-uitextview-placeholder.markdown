@@ -18,8 +18,7 @@ Foundation框架里面UITextField是有占位文字的属性，而UITextView默�
 
 还记得用户在发送iMessage的时候，那个输入框是一个带有占位文字的TextView，我们可以猜想，是不是系统提供的UITextView是带有一个内部属性就是表示占位文字的。这个简单，使用runtime挖掘一下UITextView的实例变量就知道了。
 
-```
-objective-c
+```objective-c
 unsigned int output = 0;
     Ivar *ivars = class_copyIvarList([UITextView class], &output);
     

@@ -12,7 +12,7 @@ tags:
 ---
 
 
-**NSTimer**定时器是```Foundation```框架提供的常用对象，也是iOS开发中最常用到的定时器。当然了，iOS开发中还有别的定时器，比如**CADisplayLink**和**GCD**定时器。后两种在这里暂不做讨论，今天梳理下最常用的**NSTimer**定时器。
+**NSTimer**定时器是`Foundation`框架提供的常用对象，也是iOS开发中最常用到的定时器。当然了，iOS开发中还有别的定时器，比如**CADisplayLink**和**GCD**定时器。后两种在这里暂不做讨论，今天梳理下最常用的**NSTimer**定时器。
 
 
 
@@ -25,7 +25,7 @@ tags:
 
 使用注意：
 
-我们知道NSTimer需要添加到```runloop```中才可以正常工作的，使用第一个方法创建的定时器需要手动添加到定时器，不然不会执行，在添加的时候可以选择需要添加到的模式。使用第二个方法创建的定时器已经添加到主```runloop``` 的default模式。
+我们知道NSTimer需要添加到`runloop`中才可以正常工作的，使用第一个方法创建的定时器需要手动添加到定时器，不然不会执行，在添加的时候可以选择需要添加到的模式。使用第二个方法创建的定时器已经添加到主`runloop` 的default模式。
 
 上面两种方法都是任务放到selector中，时间到了再去执行。至iOS 10之后，又添加了两个新方法，把任务封装到了block中去。使用起来更加方便。而且，官方注释写得很清楚，新的API可以规避蛋疼的循环引用问题。但是这个API只在
 
@@ -107,9 +107,9 @@ tags:
 
 #### 其他注意事项
 
-1、NSTimer需要添加到```runloop```才能执行。且要是跑起来的```runloop```。子线程的```runloop```是懒加载的。需要把NSTimer添加在子线程的runloop，选择相应的模式，并调用run方法才可以工作；
+1、NSTimer需要添加到`runloop`才能执行。且要是跑起来的`runloop`。子线程的`runloop`是懒加载的。需要把NSTimer添加在子线程的`runloop`，选择相应的模式，并调用run方法才可以工作；
 
-2、```UIScrollView```环境下如果要NSTimer也工作，要选择tracking模式或者选择common标记的模式。
+2、`UIScrollView`环境下如果要NSTimer也工作，要选择tracking模式或者选择common标记的模式。
 
 
 

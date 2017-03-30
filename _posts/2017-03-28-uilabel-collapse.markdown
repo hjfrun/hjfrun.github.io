@@ -12,7 +12,7 @@ tags:
 
 
 
-之前有做到一个feature，我们的电影有个模块，叫剧情简介。要展示一长段文本。默认折叠状态最多显示3行，3行放不下的时候，在末尾添加【…全文】用户在点击了这长段文本的时候把这个label进行展开。跟网友提的这个问题有点相似 https://segmentfault.com/q/1010000004452279。
+之前有做到一个feature，我们的电影有个模块，叫剧情简介。要展示一长段文本。默认折叠状态最多显示3行，3行放不下的时候，在末尾添加【…全文】用户在点击了这长段文本的时候把这个label进行展开。跟网友提的这个问题有点相似 https://segmentfault.com/q/1010000004452279
 
 效果如下图：
 
@@ -20,7 +20,7 @@ tags:
 ![](/img/in-post/collapse-label.gif)
 -->
 <br>
-<div align=center><img width="375" height="667" src="/img/in-post/collapse-label.gif"/></div>
+<img width="375" height="667" src="/img/in-post/collapse-label.gif"/>
 
 
 

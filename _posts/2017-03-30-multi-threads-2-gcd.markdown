@@ -1,8 +1,8 @@
 ---
 layout:     post
-title:      iOS多线程（中）— GCD篇
-subtitle:   
-date:       2017-03-30 20:06:35
+title:      iOS多线程（2)
+subtitle:   GCD相关
+date:       2017-03-30 20:06:35
 author:     "hjfrun"
 
 header-img: ""

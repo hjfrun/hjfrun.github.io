@@ -1,10 +1,9 @@
 ---
 layout:     post
 title:      iOS多线程（上）
-subtitle:   
-date:       2017-03-30 18:58:35
+subtitle:   pthread & NSThread简介
+date:       2017-03-30 18:58:35
 author:     "hjfrun"
-
 header-img: ""
 catalog: true
 tags:

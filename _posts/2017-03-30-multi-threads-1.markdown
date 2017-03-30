@@ -16,10 +16,10 @@ tags:
 
 iOS开发中有四种多线程实现方案。分别是：
 
-* pthread
-* NSThread
-* GCD
-* NSOperation & NSOperationQueue
+* `pthread`
+* `NSThread`
+* `GCD`
+* `NSOperation & NSOperationQueue`
 
 在这里打算用三篇文章把这里面的四种实现方案都简单的梳理下，以及我在实际工作中的运用。记录以备后查。
 
@@ -27,9 +27,9 @@ iOS开发中有四种多线程实现方案。分别是：
 
 
 
-##### pthread
+##### `pthread`
 
-在类Unix操作系统中，都是使用pthreads作为操作系统的线程。基于C语言实现，可移植性强。但是用起来麻烦。使用要包含头文件`#import <pthread.h>`
+在类`Unix`操作系统中，都是使用`pthread`作为操作系统的线程。基于C语言实现，可移植性强。但是用起来麻烦。使用要包含头文件`#import <pthread.h>`
 
 ```objc
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
@@ -50,9 +50,9 @@ void * printCurrentThread(void *data)
 
 
 
-##### NSThread
+##### `NSThread`
 
-既然是NS开头的，就知道是苹果在pthread基础上进行了面向对象的封装。可以直接操控线程对象，但是依然需要手动管理，偶尔用用，就像上面那个地方，调试的时候很方便打印当前线程的信息。和pthread不一样的是，创建之后，可以控制启动方式。
+既然是NS开头的，就知道是苹果在`pthread`基础上进行了面向对象的封装。可以直接操控线程对象，但是依然需要手动管理，偶尔用用，就像上面那个地方，调试的时候很方便打印当前线程的信息。和`pthread`不一样的是，创建之后，可以控制启动方式。
 
 * 先创建，再启动
 
@@ -91,7 +91,7 @@ void * printCurrentThread(void *data)
 
 
 
-* 使用NSObject的方法创建并且自动启动
+* 使用`NSObject`的方法创建并且自动启动
 
 ```objc
 [self performSelectorInBackground:@selector(threadAction:) withObject:nil];
@@ -101,7 +101,7 @@ void * printCurrentThread(void *data)
 
 * 其他注意事项：
 
-NSThread是OC封装的，提供了- cancel, -start, -main方法。能设置优先级。使用perform方法还能任务在哪个线程执行，并指定runloop运行模式：
+`NSThread`是OC封装的，提供了- cancel, -start, -main方法。能设置优先级。使用perform方法还能任务在哪个线程执行，并指定runloop运行模式：
 
 ```objc
 - (void)performSelectorOnMainThread:(SEL)aSelector withObject:(nullable id)arg waitUntilDone:(BOOL)wait modes:(nullable NSArray<NSString *> *)array;
@@ -127,4 +127,4 @@ NSThread是OC封装的，提供了- cancel, -start, -main方法。能设置优�
 + (void)sleepForTimeInterval:(NSTimeInterval)ti;
 ```
 
-其他非常用方法，参考头文件NSThread.h
+其他非常用方法，参考头文件`NSThread.h`

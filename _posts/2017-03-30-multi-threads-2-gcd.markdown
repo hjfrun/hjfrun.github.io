@@ -32,7 +32,7 @@ tags:
 
 所有组合的在一起：
 
-![](../img/in-post/gcd_sketch.png)
+![](/img/in-post/gcd_sketch.png)
 
 
 
@@ -68,8 +68,6 @@ tags:
     }
     ```
 
-    ​
-
   * 打印结果：
 
     ```objc
@@ -93,7 +91,7 @@ tags:
       * 这三个任务是并发执行的，先后顺序和添加的顺序不保证一致。执行是2->1->3。 
 
   * 步骤图：
-    ![](../img/in-post/gcd_thread_1.png)
+  ![](/img/in-post/gcd_thread_1.png)
 
 * 2、异步执行+串行队列
 
@@ -146,59 +144,62 @@ tags:
 	  - 函数在执行时，先打印了start和end，在回头执行这3个任务
 	  - 这三个任务是按顺序执行的，所以结果是1->2->3
   * 步骤图
-  ![](../img/in-post/gcd_thread_2.png)
+  ![](/img/in-post/gcd_thread_2.png)
 
 
 * 3、同步执行+并行队列
-	* 实现代码：
-		```objc
-		- (void)syncConcurrent
-		{
-		    // 创建一个并发队列
-		    dispatch_queue_t queue = dispatch_queue_create("com.hjfrun", DISPATCH_QUEUE_CONCURRENT);
-		    
-		    NSLog(@"---start---");
-		    
-		    // 使用同步函数封装3个任务
-		    dispatch_sync(queue, ^{
-		        NSLog(@"block 1 --- %@", [NSThread currentThread]);
-		    });
-		    
-		    dispatch_sync(queue, ^{
-		        NSLog(@"block 2 --- %@", [NSThread currentThread]);
-		    });
-		    
-		    dispatch_sync(queue, ^{
-		        NSLog(@"block 3 --- %@", [NSThread currentThread]);
-		    });
-		    
-		    NSLog(@"---end---");
-		}
-		```
-	* 结果：
-		```
-		---start---
-		block 1 --- <NSThread: 0x60000007ef00>{number = 1, name = main}
-		block 2 --- <NSThread: 0x60000007ef00>{number = 1, name = main}
-		block 3 --- <NSThread: 0x60000007ef00>{number = 1, name = main}
-		---end---
-    ```
-	* 解释：
-		- 同步执行意味着：
-			* 不能开启新的线程
-			* 任务创建后必须执行完成才能往下走
-		- 并发队列意味着：
-			* 任务必须按照添加队列顺序挨个执行
-		- 两者组合意味着：
-			* 所有任务都只能在主线程中执行
-			* 函数在执行时，必须按照代码中的书写顺序一行一行的执行完才能继续
-		- 注意事项：
-			* 在这里即便是并发队列，任务可以并发执行，但是由于只存在一个主线程，所以没法把任务分发到不同的线程去同步执行，其结果就是只能在主线程里按顺序挨个执行。
-	* 步骤图：
-	![](../img/in-post/gcd_thread_3.png)
+  * 实现代码：
+  
+	```objc
+	- (void)syncConcurrent
+	{
+	    // 创建一个并发队列
+	    dispatch_queue_t queue = dispatch_queue_create("com.hjfrun", DISPATCH_QUEUE_CONCURRENT);
+
+	    NSLog(@"---start---");
+
+	    // 使用同步函数封装3个任务
+	    dispatch_sync(queue, ^{
+		NSLog(@"block 1 --- %@", [NSThread currentThread]);
+	    });
+
+	    dispatch_sync(queue, ^{
+		NSLog(@"block 2 --- %@", [NSThread currentThread]);
+	    });
+
+	    dispatch_sync(queue, ^{
+		NSLog(@"block 3 --- %@", [NSThread currentThread]);
+	    });
+
+	    NSLog(@"---end---");
+	}
+	```
+  * 结果：
+
+	```
+	---start---
+	block 1 --- <NSThread: 0x60000007ef00>{number = 1, name = main}
+	block 2 --- <NSThread: 0x60000007ef00>{number = 1, name = main}
+	block 3 --- <NSThread: 0x60000007ef00>{number = 1, name = main}
+	---end---
+	```
+  * 解释：
+	- 同步执行意味着：
+		* 不能开启新的线程
+		* 任务创建后必须执行完成才能往下走
+	- 并发队列意味着：
+		* 任务必须按照添加队列顺序挨个执行
+	- 两者组合意味着：
+		* 所有任务都只能在主线程中执行
+		* 函数在执行时，必须按照代码中的书写顺序一行一行的执行完才能继续
+	- 注意事项：
+		* 在这里即便是并发队列，任务可以并发执行，但是由于只存在一个主线程，所以没法把任务分发到不同的线程去同步执行，其结果就是只能在主线程里按顺序挨个执行。
+  * 步骤图：
+  ![](/img/in-post/gcd_thread_3.png)
 
 * 4、同步执行+串行队列
-	* 实现代码：
+  * 实现代码：
+  
     ```objc
     - (void)syncSerial
     {
@@ -224,6 +225,7 @@ tags:
     }
     ```
   * 结果：
+  
     ```objc
     ---start---
     block 1 --- <NSThread: 0x60000006ad80>{number = 1, name = main}
@@ -231,36 +233,38 @@ tags:
     block 3 --- <NSThread: 0x60000006ad80>{number = 1, name = main}
     ---end---
     ```
-	* 解释：
+  * 解释：
     这里执行的原理和步骤和`同步执行+并发队列`一样，只是同步执行没法开启新的线程，所以多个任务之间也是一样只能按顺序来执行
 	
 * 5、异步执行+主队列
-	* 实现代码：
+  * 实现代码：
+	
     ```objc
     - (void)asyncMain
     {
-        // 获取主队列
-        dispatch_queue_t queue = dispatch_get_main_queue();
-        
-        NSLog(@"---start---");
-        
-        // 使用异步函数封装3个任务
-        dispatch_async(queue, ^{
-            NSLog(@"block 1 --- %@", [NSThread currentThread]);
-        });
-        
-        dispatch_async(queue, ^{
-            NSLog(@"block 2 --- %@", [NSThread currentThread]);
-        });
-        
-        dispatch_async(queue, ^{
-            NSLog(@"block 3 --- %@", [NSThread currentThread]);
-        });
-        
-        NSLog(@"---end---");
+	// 获取主队列
+	dispatch_queue_t queue = dispatch_get_main_queue();
+
+	NSLog(@"---start---");
+
+	// 使用异步函数封装3个任务
+	dispatch_async(queue, ^{
+	    NSLog(@"block 1 --- %@", [NSThread currentThread]);
+	});
+
+	dispatch_async(queue, ^{
+	    NSLog(@"block 2 --- %@", [NSThread currentThread]);
+	});
+
+	dispatch_async(queue, ^{
+	    NSLog(@"block 3 --- %@", [NSThread currentThread]);
+	});
+
+	NSLog(@"---end---");
     }
     ```
-	* 结果：
+  * 结果：
+	
     ```objc
     ---start---
     ---end---
@@ -268,7 +272,7 @@ tags:
     block 2 --- <NSThread: 0x618000067640>{number = 1, name = main}
     block 3 --- <NSThread: 0x618000067640>{number = 1, name = main}
     ```
-	* 解释：
+  * 解释：
     - 异步执行意味着：
       * 可以开启新的线程
       * 任务可以先绕过不执行，回头再来执行
@@ -277,11 +281,12 @@ tags:
       * 主队列中的任务必须在主线程中执行，不允许在子线程中执行
     - 以上条件组合后得出结果：
       * 所有任务都可以先跳过，之后再按顺序执行
-	* 步骤图
-  ![](../img/in-post/gcd_thread_5.png)
+  * 步骤图
+  ![](/img/in-post/gcd_thread_5.png)
 
 * 6、同步执行+主队列
-	* 实现代码：
+  * 实现代码：
+  
   ```objc
   - (void)syncMain
   {
@@ -306,17 +311,18 @@ tags:
       NSLog(@"---end---");
   }
   ```
-	* 结果：
+  * 结果：
+
   ```objc
   ---start---
   ```
-	* 解释：
+  * 解释：
     - 主队列中的任务必须按顺序挨个执行
     - 任务1要等主线程有空的时候（即主队列中所有任务执行完）才能执行
     - 主线程要执行完打印`---end---`的任务后才有空
     - 任务1和打印`---end---`两个任务相互等待，造成死锁
-	* 步骤图：
-  ![](../img/in-post/gcd_thread_6.png)
+  * 步骤图：
+  ![](/img/in-post/gcd_thread_6.png)
 
 
 

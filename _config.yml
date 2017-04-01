@@ -78,7 +78,7 @@ ga_domain: hjfrun.com
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "爱代码，爱生活，<br>加油努力向前"
-sidebar-avatar: /img/avatar-hjfrun.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: /img/avatar-hjfrun.png      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 

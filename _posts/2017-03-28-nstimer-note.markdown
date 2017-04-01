@@ -114,6 +114,33 @@ tags:
 
 
 
+#### 使用场景
+
+1、在一个页面开启定时器，这个页面不释放，跳转到其他页面。要求在离开这个页面的时候定时器停止工作，再回到这个页面的时候定时器继续工作。使用下面的方法。
+
+```objc
+// 页面消失的时候让定时器停止工作
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [self.timer setFireDate:[NSDate distantFuture]];
+}
+// 页面回来时让定时器继续工作
+- (void)viewWillAppear:(BOOL)animated
+{
+    [self.timer setFireDate:[NSDate distantPast]];
+}
+```
+
+注意invalidate方法是让定时器失效，这个是永久停止。
+
+可以使用isValid属性判断定时器是否还有效
+
+```objc
+@property (readonly, getter=isValid) BOOL valid;
+```
+
+
+
 简单的就梳理这么多，后续可能还会完善。。。
 
 

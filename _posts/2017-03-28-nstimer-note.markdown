@@ -3,9 +3,9 @@ layout:     post
 title:      NSTimer简单梳理
 subtitle:   
 date:       2017-03-28 14:09:35
-author:     "hjfrun"
+author:     hjfrun
 header-img: ""
-catalog: false
+catalog: true
 tags:
     - iOS
     - 学习

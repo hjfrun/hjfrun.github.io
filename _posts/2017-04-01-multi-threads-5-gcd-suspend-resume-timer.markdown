@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      iOS多线程（4）
+title:      iOS多线程（5）
 subtitle:   suspend & resume & GCD timer
 date:       2017-04-01 22:48:35
 author:     hjfrun
@@ -92,5 +92,5 @@ GCD定时器实质是`runloop`的source的一种，在敲代码dispatch source�
 
 ![](/img/in-post/gcd_timer_2.png)
 
-注意要让控制器强应用计时器，不然创建完就挂了。block里面的任务不会执行。
+注意要让控制器强应用计时器，不然创建完就挂了。block里面的任务不会执行。开源库`MSWeakTimer`就是利用的GCD计时器实现的一个不会产生循环引用的计时器。有时间再来研究其实现机制。
 

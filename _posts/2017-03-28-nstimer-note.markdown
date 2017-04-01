@@ -131,9 +131,9 @@ tags:
 }
 ```
 
-注意invalidate方法是让定时器失效，这个是永久停止。
+注意`invalidate`方法是让定时器失效，这个是永久停止。
 
-可以使用isValid属性判断定时器是否还有效
+可以使用`isValid`属性判断定时器是否还有效
 
 ```objc
 @property (readonly, getter=isValid) BOOL valid;

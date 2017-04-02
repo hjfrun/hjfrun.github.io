@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      iOS多线程（5）
+title:      iOS多线程（5）【GCD篇】
 subtitle:   suspend & resume & GCD timer
 date:       2017-04-01 22:48:35
 author:     hjfrun

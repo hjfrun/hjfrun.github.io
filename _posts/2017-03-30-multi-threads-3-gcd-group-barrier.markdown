@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      iOS多线程（3）
+title:      iOS多线程（3）【GCD篇】
 subtitle:   dispatch_group, 栅栏函数
 date:       2017-03-31 21:03:35
 author:     hjfrun

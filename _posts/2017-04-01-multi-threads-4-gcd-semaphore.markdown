@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      iOS多线程（4）
+title:      iOS多线程（4）【GCD篇】
 subtitle:   semaphore，线程同步
 date:       2017-04-01 00:40:35
 author:     hjfrun

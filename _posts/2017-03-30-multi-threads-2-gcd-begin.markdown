@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      iOS多线程（2）
+title:      iOS多线程（2）【GCD篇】
 subtitle:   GCD基础
 date:       2017-03-30 20:06:35
 author:     hjfrun

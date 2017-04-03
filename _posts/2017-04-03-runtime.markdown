@@ -1,0 +1,262 @@
+---
+layout:     post
+title:      Objective-C运行时
+subtitle:   
+date:       2017-04-03 17:00:35
+author:     hjfrun
+header-img: 
+catalog: true
+tags:
+    - iOS
+    - runtime
+    - 运行时
+---
+
+
+
+> Objective-C语言的Runtime铸就了这个语言的动态特性，这些知识虽然平时写代码用得少一些，但是每个iOS开发程序员都要深入了解的。
+
+
+
+## 前言
+
+还记得初学iOS的时候，就感觉这个语言的方法调用方式挺奇葩的。之前有C/C++、Java基础。`Objective-C`的方法调用用的是`[receiver message]`给前面的接受者`发送消息`，表示调用`receiver`对象的`message`方法。当时对这个`发送消息`的含义没有深刻了解。其实`Objective-C`的`[receiver message]`都会转换为：
+
+```objc
+// 没有参数
+objc_msgSend(receiver, selector);
+// 有参数
+objc_msgSend(receiver, selector, arg1, arg2, ...);
+```
+
+如果`receiver`能够找到对应的`selector`，这事情就简单了。就相当于直接执行了接受者对象的特定方法；否则，消息要么被`转发`，或者`临时向接受者动态添加这个selector`对应的实现内容。要是这些都没法处理，那么程序就会崩溃。
+
+可以看出`[receiver message]`不是一个简简单单的方法调用。因为这只是在`编译阶段`确定了要向接受则发送`message`这条消息，而`receiver`将要如何响应这条消息，就要看运行时发生的情况来确定了。
+
+`Objective-C`是一门动态语言，它总是想办法把一些决定工作从编译阶段推迟到运行时。也就是说只有编译器是不够的，还需要一个`运行时系统（runtime system）`来执行编译后的代码。这就是`Objective-C Runtime`系统存在的意义，它是整个`Objective-C`运行框架的基石。
+
+### 与Runtime的交互
+
+`Objective-C`从三种不同的层级上与`Runtime`系统进行交互。分别是通过`Objective-C`源代码，通过`Foundation`框架中的`NSObject`类定义的方法，通过`Runtime`函数的直接调用。
+
+#### Objective-C源代码
+
+大部分情况下，我们直观写自己的`Objective-C`代码就行。`Runtime系统`默默在背后为我们工作。消息的执行会使用到一些编译器为实现动态语言特性而创建的数据结构和函数。**Objective-C中的类、方法和协议等在Runtime中都有一些数据结构来定义**。后面详细阐述。
+
+#### NSObject的方法
+
+Cocoa中大多数类都继承于`NSObject`类，也就自然继承了它的方法。最特殊的例外是`NSProxy`，它是一个抽象超类。它实现了一些消息转发有关的方法，可以通过继承它来实现一个其他类替身类或者虚拟出一个不存在的类，说白了就是领导把自己展现给大家风光无限，但是把活儿都交给幕后的小弟去干。
+
+有的`NSObject`中的方法起到了抽象接口的作用，比如`- description`方法需要你重载它并为你定义的类提供描述内容。`NSObject`还有些方法能在运行时获取类的信息，并检查一些特性。比如`- class`返回对象的类；`-isKindOfClass：`和`-isMemberOfClass：`则检查对象是否在制定的类的继承体系中；`-respondsToSelector：`检查对象能否响应制定的消息；`-conformsToProtocol：`检查对象是否实现了制定协议类的方法；`-methodForSelector：`则返回制定方法实现的地址。
+
+#### Runtime函数
+
+Runtime系统是一个由一系列函数和数据结构组成，具有公共接口的动态共享库。头文件存放于/usr/include/objc目录下。许多函数允许你用C代码来实现Objective-C中同样的功能。虽然有一些方法构成了NSObject类的基础。但是你在写Objective-C代码时一般不会直接用到这些函数，除非是写一些Objective-C与其他语言的桥接或者底层的debug工作。在[Objective-C Runtime Reference](https://developer.apple.com/reference/objectivec/objective_c_runtime?language=objc)中有对Runtime函数的详细文档。
+
+
+
+### Runtime术语
+
+上面提到的objc_msgSend:方法，其原型是这样的：
+
+```objc
+id objc_msgSend(id self, SEL op, ...);
+```
+
+#### id
+
+`Objc_msgSend`第一个参数类型是`id`，它其实是一个指向类实例的指针；
+
+```objc
+typedef struct objc_object *id;
+```
+
+那么`objc_object`又是什么呢：
+
+```objc
+struct objc_object {Class isa;};
+```
+
+`objc_object`结构体包含了一个`isa`指针，根据`isa`指针可以顺藤摸瓜找到对象所属的类。
+
+PS：`isa`指针不总是指向实例对象所属的类，不能依靠它来确定类型，而是应该调用`-class`方法来确定实例对象的类。因为`KVO`的实现机理就是将被观察对象的`isa`指针指向一个中间类而不是真实的类，这是一种叫做`isa-swizzling`的技术，详见[文档](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/KeyValueObserving/Articles/KVOImplementation.html)
+
+#### SEL
+
+`objc_msgSend`函数的第二个参数类型是`SEL`，它是`selector`在`Objective-C`中的表示类型（`Swift`中是`Selector`类）。`selector`是方法选择器。
+
+```objc
+typedef struct objc_selector *SEL;
+```
+
+其实它就是映射到方法的C字符串，我们可以用`Objective-C`编译器命令`@selector()`或者`Runtime`系统的`sel_registerName`函数来获得一个`SEL`类型的方法选择器。
+
+不同类中相同名字的方法对应的方法选择器是相同的，即使方法名字相同而变量类型不同也会导致它们具有相同的方法选择器，于是`Objective-C`中方法命名又是会带上参数类型。
+
+#### Class
+
+之所以说isa是指针是因为`Class`其实是一个指向`objc_class`结构体的指针：
+
+```objc
+typedef struct objc_class *Class;
+```
+
+而`objc_class`就是我们摸到的那个瓜。打开头文件里面的内容如下：
+
+```objc
+struct objc_class {
+    Class isa  OBJC_ISA_AVAILABILITY;
+
+#if !__OBJC2__
+    Class super_class                                        OBJC2_UNAVAILABLE;
+    const char *name                                         OBJC2_UNAVAILABLE;
+    long version                                             OBJC2_UNAVAILABLE;
+    long info                                                OBJC2_UNAVAILABLE;
+    long instance_size                                       OBJC2_UNAVAILABLE;
+    struct objc_ivar_list *ivars                             OBJC2_UNAVAILABLE;
+    struct objc_method_list **methodLists                    OBJC2_UNAVAILABLE;
+    struct objc_cache *cache                                 OBJC2_UNAVAILABLE;
+    struct objc_protocol_list *protocols                     OBJC2_UNAVAILABLE;
+#endif
+
+} OBJC2_UNAVAILABLE;
+```
+
+可以看到运行时一个类还关联了它的超类指针、类名、成员变量、方法、缓存、还有遵守的协议。
+
+在`objc_class`结构体中：`ivars`是`objc_ivar_list`指针；`methodLists`是指向`objc_method_list`指针的指针。也就是说可以动态修改`*methodList`的值来添加成员方法，这也是`category`实现的原理，同样解释了`category`不能添加属性的原因。可以理解为`objc_ivar_list`结构体存储着`objc_ivar`数组列表，而`objc_ivar`结构体存储了类的单个成员变量的信息；同理`objc_method_list`结构体存储着`objc_method`数组列表，而`objc_method`结构体存储了类的某个方法的信息。最后还有一个`objc_cache`，它是缓存，它在`objc_class`中有很重要的作用。
+
+在上面`objc_class`的定义中可以看到它也有一个`isa`对象，这是因为一个`Objective-C`类本身同时也是一个对象，为了处理类和对象的关系，`Runtime`库创建了一种叫做`元类`（`meta class`）的东西。类对象所属类型就叫做`元类`，它用来描述类对象本身所具备的元数据。类方法就定义在此处，因为这些方法可以理解为类对象的实例方法。每个类仅有一个类对象，而每个类对象仅有一个与之关联的元类。当我们写类似`[NSObject alloc]`的消息时，事实上是把这个消息发给了一个`类对象`（`class object`），`这个类对象必须是一个元类的实例`，而这个元类同时也是一个根元类的实例。所有的元类最终都只想根元类为其超类。所有的元类的方法列表都有能够响应消息的类方法。所有当`[NSObject alloc]`这条消息发送给类对象时，`objc_msgSend()`会**去它的元类里面去查找能够响应消息的方法**，如果找到了，然后这个类对象执行方法调用。
+
+![](http://7ni3rk.com1.z0.glb.clouddn.com/Runtime/class-diagram.jpg)
+
+上图实线是`super_class`指针，虚线是`isa`指针。注意：根元类的超类是`NSObject`，而`isa`指向了自己。而`NSObject`的超类为`nil`，也就是说它没有超类。
+
+
+
+#### Method
+
+`Method`是一种代表类中某个方法的类型。
+
+```objc
+typedef struct objc_method *Method;
+```
+
+而`objc_method`在上面的方法列表中提过，它存储了方法名，方法类型和方法实现：
+
+```objc
+struct objc_method {
+  SEL method_name;
+  char *method_types;
+  IMP method_imp;
+}
+```
+
+* 方法名类型为`SEL`，前面提过相同名字的方法即使在不同类中定义，他们的方法选择器也相同；
+* 方法类型`method_types`是个`char`指针，其实存储着方法的参数类型和返回值类型；
+* `method_imp`指向了方法的实现，本质上是一个函数指针。
+
+#### Ivar
+
+`Ivar`是一种代表类中实例变量的类型。
+
+```objc
+typedef struct objc_ivar *Ivar;
+```
+
+而objc_ivar在上面的成员变量列表中也提到过：
+
+```objc
+struct objc_ivar {
+  char *ivar_name;
+  char *ivar_type;
+  int ivar_offset;
+ #ifdef __LP64__
+  int space;
+ #endif
+}
+```
+
+#### IMP
+
+IMP在objc.h中定义是：
+
+```objc
+typedef id (*IMP)(id, SEL, ...);
+```
+
+它就是一个函数指针，这是由编译器生成的。当我们发起一个Objective-C消息之后，最终它会执行的那段代码，就是由这个函数指针制定的。而IMP这个函数指针就指向了这个方法的实现。既然得到了执行某个实例某个方法的入口，我们就可以绕开消息传递阶段，直接执行方法。
+
+可以看得出来IMP指向的方法与objc_msgSend函数类型相同，参数都包含id和SEL类型。每个方法名都对应一个SEL类型的方法选择器，而每个实例对象中的SEL对应的方法实现肯定是唯一的，通过一组id和SEL参数就能唯一确定的方法实现地址；反之亦然。
+
+#### Cache
+
+在runtime.h中Cache的定义如下：
+
+```objc
+typedef struct objc_cache *Cache;
+```
+
+在上面的objc_class结构体中有一个struct objc_cache *cache。objc_cache的实现如下：
+
+```objc
+struct objc_cache {
+  unsigned int mask /* total = mask + 1 */;
+  unsigned int occupied;
+  Method buckets[1];
+}
+```
+
+Cache为方法调用的性能进行优化，通俗的讲，每当实例对象接收到一个消息时，它不会再isa指向的类的方法列表中遍历查找能够响应消息的方法，因为这样效率太低了，而是优先在Cache中查找。Runtime系统会把调用的方法存到Cache中，下次查找的时候效率更高。
+
+#### Property
+
+@property标记了类中的属性，它是一个指向objc_property结构体的指针；
+
+```objc
+typedef struct objc_property *Property;
+typedef struct objc_property *objc_property_t; // 更常用
+```
+
+可以通过class_copyPropertyList和protocol_copyPropertyList获取类和协议中的属性：
+
+```objc
+objc_property_t *class_copyPropertyList(Class cls, unsigned int *outCount);
+objc_property_t *protocol_copyPropertyList(Class cls, unsigned int *outCount);
+```
+
+返回类型为指向指针的指针，因为属性列表是一个数组，每个元素都是一个objc_property_t指针，这两个函数返回的值是指向这两个数组的指针。
+
+可以使用下面的代码来获取属性列表：
+
+```objc
+objc_property_t *properties = class_copyPropertyList([UIView class], &outCount);
+```
+
+使用property_getName函数来查找属性的名称：
+
+```objc
+const char *property_getName(objc_property_t property);
+```
+
+可以使用class_getProperty和protocol_getProperty通过给出的名称来在类和协议中获取属性的引用：
+
+```objc
+objc_property_t class_getProperty(Class cls, const char *name);
+objc_property_t protocol_getProperty(Protocol *proto, const char *name, BOOL isRequiredProperty, BOOL isInstanceProperty);
+```
+
+可以用property_getAttributes函数来发掘属性名称和@encode类型字符串：
+
+```objc
+const char *property_getAttributes(objc_property_t property);
+```
+
+对比class_copyIvarList函数，使用class_copyPropertyList函数只能获取类的属性，而不包含成员变量。但此时获取的属性名是不带下划线的。
+
+
+
+### 消息
+
+
+

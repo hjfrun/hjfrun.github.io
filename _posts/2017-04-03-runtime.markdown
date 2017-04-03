@@ -352,5 +352,218 @@ PS：动态方法解析会在消息转发机制浸入前执行。如果`responds
 
 ## 消息转发
 
+![](http://7ni3rk.com1.z0.glb.clouddn.com/QQ20141113-1@2x.png)
 
+### 重定向
+
+在消息转发机制执行前，`Runtime`系统会给我们一次偷梁换柱的机会，即通过重载`- (id)forwardingTargetForSelector:(SEL)aSelector`方法替换消息的接受者会其他对象：返回值为接受消息的其他对象。
+
+```objc
+- (id)forwardingTargetForSelector:(SEL)aSelector {
+  if (aSelector == @selector(mysteriousMethod:)) {
+    return alternateObject;
+  }
+  return [super forwardingTargetForSelector:aSelector];
+}
+```
+
+毕竟消息转发要耗费更多时间。如果此方法返回`nil`或`self`，则会进入消息转发机制`forwardInvocation：`否则将向返回的对象重新发送消息。
+
+如果想替换类方法的接受者，需要重载`+ (id)forwardingTargetForSelector:(SEL)aSelector`方法，并放回类对象：
+
+```objc
++ (id)forwardingTargetForSelector:(SEL)aSelector
+  {
+    if(sSelector == @selector(xxx)) {
+      return NSClassFromString(@"Class Name");
+    }
+  return [super forwardingTargetForSelector:aSelector];
+  }
+```
+
+### 转发
+
+当动态方法解析不做处理返回`NO`时，也没有定义重定向设置要接受消息的备胎时。`forwardInvocation：`方法会被执行，我们可以重写方法来定义我们的转发逻辑：
+
+```objc
+- (void)forwardInvocation:(NSInvocation:)anInvocation {
+  if ([someOtherObject respondsToSelector:[anInvocation selector]])
+    [anInvocation invokeWithTarget:someOtherObject];
+  else
+    [super forwardInvocation:anInvocation];
+}
+```
+
+该消息的唯一参数是个`NSInvocation`类型的对象。该对象封装了原始的消息和消息参数。我们可以实现`forwardInvocation：`方法来对不能处理的消息做一些默认的处理，也可以将消息转发给其他对象来处理，而不跑出错误。
+
+这里需要注意是参数`anInvocation`是从哪里来的呢？其实在`forwardInvocation：`消息发送之前，`Runtime`系统会向对象发送`methodSignatureForSelector：`消息，并取得返回的方法签名用于生成`NSInvocation`对象。所以我们在重载`forwardInvocation：`的同时也要重写`methodSignatureForSelector：`方法，否则会抛出异常。
+
+当一个对象有没有响应的方法实现而无法响应某消息时，运行时系统将通过`forwardInvocation：`消息通知该对象。每个对象都从`NSObject`类中继承了`forwardInvocation：`方法。然后`NSObject`中的方法实现只是简单调用了`doesNotRecognizeSelector：`。通过实现我们自己的`forwardInvocation：`方法，我们可以在该方法实现中将消息转发给其他对象。
+
+`forwardInvocation：`方法就像一个不能识别的消息的分发中心，将这些消息转发给不同接受对象。或者它也可以像一个运输站将所有的消息都发送给同一个接受对象。它可以将一个消息翻译成另外一个消息，或者简单的吃掉某些消息，因此没有响应也没有错误。`forwardInvocation：`方法也可以对不同的消息提供同样的响应，而这一切都取决于方法的具体实现。该方法所提供是将不同的对象链接到消息链的能力。
+
+注意：`forwardInvocation：`方法只有在接受对象中无法正常响应消息时才会被调用。所以，如果我们希望一个对象将`negotiate`消息转发给其他对象，则这个对象不能有`negotiate`方法。否则，`forwardInvocation：`将不可能会调用。
+
+### 转发和多继承
+
+转发和继承相似，可以用于为`Objective-C`编程添加一些多继承的效果。就像下图那样，一个对象把消息转发出去，就好似它把另一个对象中的方法借过来或者是“继承”过来一样。
+
+![](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Art/forwarding.gif)
+
+这使得不同继承体系分支下的两个类可以“继承”对方的方法，在上图中`Warrior`和`Diplomat`没有继承关系，但是`Warrior`将`negotiate`消息转发给了`Diplomat`后就好似`Diplomat`是`Warrior`的超类一样。
+
+消息转发弥补了`Objective-C`不支持多继承的性质，也避免了因为多继承导致单个类变得臃肿复杂。它将问题分解得很细，只针对想要借鉴的方法才转发，而不是转发机制是透明的。
+
+### 替代者对象（Surrogate Objects）
+
+抓发不仅能模拟多继承，也能使轻量级对象代表重量级对象。参考[官方文档](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtForwarding.html#//apple_ref/doc/uid/TP40008048-CH105-SW11).
+
+### 转发与继承
+
+尽管转发很像继承，但是`NSObject`类不会将二者弄混。像`respondsToSelector：`和`isKindOfClass：`这类方法只会考虑继承体系，不会考虑转发链。上图中，如果测试一个`Warrior`对象是否响应`negotiate`消息，结果返回是`NO`，尽管它能够接受`negotiate`消息而不报错。因为它靠消息转发给`Diplomat`来响应消息。如果为了某些意图偏要“弄虚作假”让别人以为`Warrior`继承到了`Diplomat`的`negotiate`方法，需要重新实现`respondsToSelector：`和`isKindOfClass：`来加入你的转发算法。
+
+
+
+除了`respondsToSelector：`和`isKindOfClass：`之外，`instancesRespondToSelector：`中也应该写一份转发算法。如果使用了协议，`conformsToProtocol：`同样也要加入到这一行列中。类似地，如果一个对象转发它接受的任何远程消息，它得给出一个`methodSignatureForSelector：`来返回准确的方法描述，这个方法会最终响应被转发的消息。如果一个对象能给它的替代者对象转发消息，它需要像下面这样实现`methodSignatureForSelector：`
+
+```objc
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)selector
+{
+  NSMethodSignature *signature = [super methodSignatureForSelector:selector];
+  if (!signature) {
+    signature = [surrogate methodSignatureForSeletor:selector];
+  }
+  return signature;
+}
+```
+
+## 健壮的实例变量（Non Fragile ivars）
+
+在`Runtime`的现行版本中，最大的特点就是健壮的实例变量。当一个类被编译时，实例变量的布局也就形成了，它表明访问类的实例变量的位置。从对象头部开始，实例变量一次根据自己所占空间而产生位移：
+
+![](http://7ni3rk.com1.z0.glb.clouddn.com/nf1.png)
+
+上图左边是`NSObject`类的实例变量布局，有图是我们自己写的类的布局，也就是在超类后面加上我们自己的实例变量，看起来不错。但试想哪天苹果更新了`NSObject`类，发布新版本的系统的话，那就悲剧了：
+
+![](http://7ni3rk.com1.z0.glb.clouddn.com/nf2.png)
+
+我们自定义的类被划了两道线，那是因为那块区域跟超类重叠了。唯有苹果将超类改成以前的布局才能拯救我们，但这样它们不能再拓展它们的框架了。因为成员变量布局被死死地固定了。在脆弱的实例变量环境下我们需要重新编译继承自`Apple`的类来恢复兼容性。那么在健壮的实例变量下会怎么样呢？
+
+![](http://7ni3rk.com1.z0.glb.clouddn.com/nf3.png)
+
+在健壮的实例变量下编译器生成的实例变量布局跟以前一样，但是当`Runtime`检测到与超类有部分重叠时它会调整新添加的实例变量的位移，那样你在子类中新添加的成员就被保护起来了。
+
+需要注意的是在健壮的实例变量下，不要使用`sizeof(someClass)`，而是用`class_getInstanceSize([SomeClass class])`代替；也不要使用`offsetof(SomeClass, SomeIvar)`，而要使用`ivar_getOffset(class_getInstanceVariable([SomeClass class], "SomeIvar"))`来代替。
+
+## 关联对象（Objective-C Associated Objects）
+
+在`OS X 10.6`之后，`Runtime`系统让`Objective-C`支持向对象动态添加变量。设计到的函数有以下三个：
+
+```objc
+void objc_setAssociatedObject(id object, const void *key, id value, obj_AssociationPolicy policy);
+id objc_getAssociatedObject(id object, const void *key);
+void objc_removeAssociatedObjects(id object);
+```
+
+这些方法以键值对的形式动态地向对象添加、获取和删除关联值。其中关联政策是一组枚举敞亮：
+
+```objc
+enum {
+  OBJC_ASSOCIATION_ASSIGN = 0,
+  OBJC_ASSOCIATION_RETAIN_NONATOMIC = 1,
+  OBJC_ASSOCIATION_COPY_NONATOMIC = 3,
+  OBJC_ASSOCIATION_RETAIN = 01401,
+  OBJC_ASSOCIATION_COPY = 01403
+};
+```
+
+这些常量对应着引用关联值的政策，也就是`Objective-C`内存管理的引用计数机制。
+
+## Method Swizzling
+
+之前所说的消息转发虽然功能强大，但需要我们了解并且能更改对应类的源代码，因为我们需要实现自己的转发逻辑。当我们无法触碰到某个类的源代码，却想要更改这个类某个方法的实现时，要怎么做呢？继承并重写方法是一种想法，但是有时无法达到目的。这里介绍的是`Method Swizzling`，它通过重新映射方法的实现来达到偷天换日的目的。跟消息转发相比，`Method Swizzling`的做法更隐蔽，甚至有些冒险。下面摘抄一个`NSHipster`的例子：
+
+```objc
+#import <objc/runtime.h> 
+ 
+@implementation UIViewController (Tracking) 
+ 
++ (void)load { 
+    static dispatch_once_t onceToken; 
+    dispatch_once(&onceToken, ^{ 
+        Class aClass = [self class]; 
+ 
+        SEL originalSelector = @selector(viewWillAppear:); 
+        SEL swizzledSelector = @selector(xxx_viewWillAppear:); 
+ 
+        Method originalMethod = class_getInstanceMethod(aClass, originalSelector); 
+        Method swizzledMethod = class_getInstanceMethod(aClass, swizzledSelector); 
+        
+        // When swizzling a class method, use the following:
+        // Class aClass = object_getClass((id)self);
+        // ...
+        // Method originalMethod = class_getClassMethod(aClass, originalSelector);
+        // Method swizzledMethod = class_getClassMethod(aClass, swizzledSelector);
+ 
+        BOOL didAddMethod = 
+            class_addMethod(aClass, 
+                originalSelector, 
+                method_getImplementation(swizzledMethod), 
+                method_getTypeEncoding(swizzledMethod)); 
+ 
+        if (didAddMethod) { 
+            class_replaceMethod(aClass, 
+                swizzledSelector, 
+                method_getImplementation(originalMethod), 
+                method_getTypeEncoding(originalMethod)); 
+        } else { 
+            method_exchangeImplementations(originalMethod, swizzledMethod); 
+        } 
+    }); 
+} 
+ 
+#pragma mark - Method Swizzling 
+ 
+- (void)xxx_viewWillAppear:(BOOL)animated { 
+    [self xxx_viewWillAppear:animated]; 
+    NSLog(@"viewWillAppear: %@", self); 
+} 
+ 
+@end
+```
+
+上面的代码通过添加一个`Tracking`类别到`UIViewController`类中，将`UIViewController`类的`viewWillAppear：`方法和`Tracking`类别中的`xxx_viewWillAppear：`方法的实现相互调换。`Swizzling`应该在`+load`方法中实现，因为`+load`是在一个类最开始加载时调用。`dispatch_once`是`GCD`中的一个方法，它保证了代码块只执行一次，并让其成为一个院子操作，线程安全。
+
+如果类中不存在要替换的方法，那么就先用`class_addMethod`和`class_replaceMethod`函数添加和替换两个方法的实现；如果类中已经有了想要替换的方法，那么就调用`method_exchangeImplementations`函数交换两个方法的`IMP`，这是苹果提供给我们用于实现`Method Swizzling`的便捷方法。
+
+在上面的注释里有段关于如果交换的是一个类方法的说明。
+
+`object_getClass((id)self)`与`[self class]`返回的结果类型都是`Class`，但前者为元类，后者为其本身，因此`self`为`Class`而不是实例。注意`[NSObject class]`与`[object class]`的区别：
+
+```objc
++ (Class)class {
+  return self;
+}
+
+- (Class)class {
+  return object_getClass(self);
+}
+```
+
+PS：如果类中没有想被替换实现的原方法时：`class_replaceMethod`相当于直接调用`class_addMethod`向类中添加该方法的实现；否则调用`method_setImplementation`方法，`types`参数会被忽略。`method_exchangeImplementations`方法做的事情与如下的原子操作等价：
+
+```objc
+IMP imp1 = method_getImplementation(m1);
+IMP imp2 = method_getImplementation(m2);
+method_setImplementation(m1, imp2);
+method_setImplementation(m2, imp1);
+```
+
+最后的`xxx_viewWillAppear：`方法的定义看似是地柜引发死循环，其实不会。因为`[self xxx_viewWillAppear:animated]`消息会动态找到`xxx_viewWillAppear：`方法的实现，而它的实现已经被我们与`viewWillAppear：`方法实现进行了呼唤，所以这段代码不仅不会死循环，如果把`[self xxx_viewWillAppear:animated]`换成`[self viewWillAppear:animated]`反而会引发死循环。
+
+
+
+
+
+全文参考: [http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/](http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/)
 

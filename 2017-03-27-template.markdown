@@ -1,5 +1,5 @@
 ---
-layout:     post
+layout:     page
 title:      标题
 subtitle:   
 date:       2017-04-03 23:36:35

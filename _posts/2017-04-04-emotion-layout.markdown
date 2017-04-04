@@ -167,7 +167,7 @@ tags:
 
 
 
-![](../img/in-post/emotion_layout_1.png)
+![](/img/in-post/emotion_layout_1.png)
 
 
 

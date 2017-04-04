@@ -286,7 +286,7 @@ const char *property_getAttributes(objc_property_t property);
 
 在这两个参数中，`self`更有用。实际上，它是在方法实现中访问消息接受者对象的实例变量的途径。
 
-而当方法中的`super`关键字接受消息时，编译器会创建一个`obj_super`的结构体：
+而当方法中的`super`关键字接受消息时，编译器会创建一个`objc_super`的结构体：
 
 ```objc
 struct objc_super { id receiver; Class class;};

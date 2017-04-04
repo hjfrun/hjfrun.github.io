@@ -14,11 +14,11 @@ tags:
 
 
 
-> Objective-C语言的Runtime铸就了这个语言的动态特性，这些知识虽然平时写代码用得少一些，但是每个iOS开发程序员都要深入了解的。
+> `Objective-C`语言的`Runtime`铸就了这个语言的动态特性，这些知识虽然平时写代码用得少一些，但是每个iOS开发程序员都要深入了解的。
 
 ## 前言
 
-还记得初学iOS的时候，就感觉这个语言的方法调用方式挺奇葩的。之前有C/C++、Java基础。`Objective-C`的方法调用用的是`[receiver message]`给前面的接受者`发送消息`，表示调用`receiver`对象的`message`方法。当时对这个`发送消息`的含义没有深刻了解。其实`Objective-C`的`[receiver message]`都会转换为：
+`Objective-C`的方法调用用的是`[receiver message]`给前面的接受者`发送消息`，表示调用`receiver`对象的`message`方法。当时对这个`发送消息`的含义没有深刻了解。其实`Objective-C`的`[receiver message]`都会转换为：
 
 ```objc
 // 没有参数
@@ -43,17 +43,17 @@ objc_msgSend(receiver, selector, arg1, arg2, ...);
 
 ### NSObject的方法
 
-Cocoa中大多数类都继承于`NSObject`类，也就自然继承了它的方法。最特殊的例外是`NSProxy`，它是一个抽象超类。它实现了一些消息转发有关的方法，可以通过继承它来实现一个其他类替身类或者虚拟出一个不存在的类，说白了就是领导把自己展现给大家风光无限，但是把活儿都交给幕后的小弟去干。
+`Cocoa`中大多数类都继承于`NSObject`类，也就自然继承了它的方法。最特殊的例外是`NSProxy`，它是一个抽象超类。它实现了一些消息转发有关的方法，可以通过继承它来实现一个其他类替身类或者虚拟出一个不存在的类，说白了就是领导把自己展现给大家风光无限，但是把活儿都交给幕后的小弟去干。
 
 有的`NSObject`中的方法起到了抽象接口的作用，比如`- description`方法需要你重载它并为你定义的类提供描述内容。`NSObject`还有些方法能在运行时获取类的信息，并检查一些特性。比如`- class`返回对象的类；`-isKindOfClass：`和`-isMemberOfClass：`则检查对象是否在制定的类的继承体系中；`-respondsToSelector：`检查对象能否响应制定的消息；`-conformsToProtocol：`检查对象是否实现了制定协议类的方法；`-methodForSelector：`则返回制定方法实现的地址。
 
 ### Runtime函数
 
-Runtime系统是一个由一系列函数和数据结构组成，具有公共接口的动态共享库。头文件存放于/usr/include/objc目录下。许多函数允许你用C代码来实现Objective-C中同样的功能。虽然有一些方法构成了NSObject类的基础。但是你在写Objective-C代码时一般不会直接用到这些函数，除非是写一些Objective-C与其他语言的桥接或者底层的debug工作。在[Objective-C Runtime Reference](https://developer.apple.com/reference/objectivec/objective_c_runtime?language=objc)中有对Runtime函数的详细文档。
+`Runtime`系统是一个由一系列函数和数据结构组成，具有公共接口的动态共享库。头文件存放于`/usr/include/objc`目录下。许多函数允许你用C代码来实现`Objective-C`中同样的功能。虽然有一些方法构成了`NSObject`类的基础。但是你在写`Objective-C`代码时一般不会直接用到这些函数，除非是写一些`Objective-C`与其他语言的桥接或者底层的`debug`工作。在[Objective-C Runtime Reference](https://developer.apple.com/reference/objectivec/objective_c_runtime?language=objc)中有对`Runtime`函数的详细文档。
 
 ## Runtime术语
 
-上面提到的objc_msgSend:方法，其原型是这样的：
+上面提到的`objc_msgSend:`方法，其原型是这样的：
 
 ```objc
 id objc_msgSend(id self, SEL op, ...);
@@ -91,7 +91,7 @@ typedef struct objc_selector *SEL;
 
 ### Class
 
-之所以说isa是指针是因为`Class`其实是一个指向`objc_class`结构体的指针：
+之所以说`isa`是指针是因为`Class`其实是一个指向`objc_class`结构体的指针：
 
 ```objc
 typedef struct objc_class *Class;
@@ -286,7 +286,7 @@ const char *property_getAttributes(objc_property_t property);
 
 在这两个参数中，`self`更有用。实际上，它是在方法实现中访问消息接受者对象的实例变量的途径。
 
-而当方法中的`super`关键字接受消息时，编译器会创建一个`obj_super`的结构体：
+而当方法中的`super`关键字接受消息时，编译器会创建一个`objc_super`的结构体：
 
 ```objc
 struct objc_super { id receiver; Class class;};
@@ -331,14 +331,14 @@ void tynamicMethodIMP(id self, SEL _cmd) {
 }
 
 @implementation MyClass
-  + (BOOL)resolveInstanceMethod:(SEL)aSel
-  {
-    if (aSel == @selector(resolveThisMethodDynamically)) {
-      class_addMethod([self class], aSel, (IMP)dynamicMethodIMP, "v@:");
-      return YES;
-    }
-  return [super resolveInstanceMethod:aSel];
++ (BOOL)resolveInstanceMethod:(SEL)aSel
+{
+  if (aSel == @selector(resolveThisMethodDynamically)) {
+    class_addMethod([self class], aSel, (IMP)dynamicMethodIMP, "v@:");
+    return YES;
   }
+return [super resolveInstanceMethod:aSel];
+}
 ```
 
 在上面例子中为`resolveThisMethodDynamically`方法添加了动态实现内容，也就是`dynamicMethodIMP`方法中的代码。其中`"v@:"`表示返回值和参数，这个符号设计[Type Encoding](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html)
@@ -373,12 +373,12 @@ PS：动态方法解析会在消息转发机制浸入前执行。如果`responds
 
 ```objc
 + (id)forwardingTargetForSelector:(SEL)aSelector
-  {
-    if(sSelector == @selector(xxx)) {
-      return NSClassFromString(@"Class Name");
-    }
-  return [super forwardingTargetForSelector:aSelector];
+{
+  if(sSelector == @selector(xxx)) {
+    return NSClassFromString(@"Class Name");
   }
+return [super forwardingTargetForSelector:aSelector];
+}
 ```
 
 ### 转发
@@ -565,5 +565,9 @@ method_setImplementation(m2, imp1);
 
 
 
-全文参考: [http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/](http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/)
+参考:
+
+ [Objective-C Runtime Programming Guide](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Introduction/Introduction.html)
+
+ [http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/](http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/)
 

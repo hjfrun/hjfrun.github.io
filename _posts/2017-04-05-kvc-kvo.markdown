@@ -14,7 +14,116 @@ tags:
 
 
 
+`键值编码` `KVC`(`Key-value coding`)和`键值观察` `KVO`(`Key-value observing`)是帮助我们驾驭`Objective-C`动态特性并简化代码的机制。
 
 
 
+## `KVC`
 
+键值编码的最基本调用是`-valueForKey:`和`-setValue:forKey:`。以字符串的形式向对象发送消息。`valueForKey:`首先查找键`-key`或`-isKey`命名的`getter`方法，如果不存在`getter`方法，它将在内部查找名为`_key`或`key`的实例变量。
+
+使用KVC访问属性的代价比直接使用存储的方法要大。
+
+```objc
+@property (nonatomic, copy) NSString *name;
+
+// 取值
+NSString *name = [obj valueForKey:@"name"];
+
+// 设值
+[obj setValue:@"hjfrun" forKey:@"name"];
+```
+
+`KVC`不仅可以访问作为对象属性，而且可以访问一些基本数据类型。和`struct`。`Foundation`会自动的包装和解包。
+
+
+
+### 获取值
+
+```objc
+valueForKey: // 传入NSString属性的名字
+valueForKeyPath: 	// 传入NSString属性的路径,xx.xx形式
+valueForUndefinedKey	// 默认抛出异常，可以重写这个函数做错误处理
+```
+
+### 修改值
+
+```objc
+setValue:forKey:
+setValue:forKeyPath:
+setValue:forUndefinedKey:
+setNilValueForKey:		// 当对非类对象设置属性nil时，调用，默认抛出异常
+```
+
+
+
+## `KVO`
+
+`KVO`是`Cocoa`提供的叫做键值观察的机制。`对象`可以通过它得到`其他对象`特定属性的变更的通知。这种机制在`MVC`模式的场景中很重要，因为它让视图对象可以经由控制器层观察模型对象的变更。
+
+这一机制基于`NSKeyValueObserving`非正式协议，`Cocoa`通过这个协议为所有遵守协议的对象提供了一种自动化的属性观察的能力。要实现自动观察，参与`KVO`的对象需要符合`KVC`的要求和存储方法，也可以手动实现观察者模式。`KVO`的使用一般分为3步。
+
+#### 添加观察者
+
+`addObserver:forKeyPath:options:context:`当一个实例的某个具体属性有任何变更的时候，另一个实例需要被通知。该方法是在两个实例间建立联系，而不是两个类之间。`options`对应的是一个更新选项。`NSKeyValueObservingOptionNew`和`NSKeyValueObservingOptionOld`选项分别更新后的值和旧值。更简单的是使用`NSKeyValueObservingOptionPrior`选项。随后我们可以使用以下方式获取改变前后的值。
+
+```objc
+id oldValue = change[NSKeyValueChangeOldKey];
+id newValue = change[NSKeyValueChangeNewKey];
+```
+
+我们常常需要当一个值改变的时候更新UI，但是我们也要在第一次运行代码的时候更新一次UI。可以用`KVO`添加`NSKeyValueObservingOptionInitial`选项。如果我们注册了`NSKeyValueObservingOptionPrior`选项，我们将收到两个通知，一个在变更前，一个在变更之后。
+
+`context`是一个指针，当`observeValueForKeyPath:ofObject:change:context:`方法执行时`context`会提供给观察者。`context`可以是C指针或者一个对象引用，既可以当做一个唯一的标识来分辨被观察的变更，也可以向观察者提供数据。
+
+
+
+#### 接收变更通知
+
+`observeValueForKeyPath:ofObject:change:context:`方法。这个方法的实现决定了观察者如何回应变更的通知。可以在这个方法里自定义如何回应被观察属性的变化。
+
+#### 移除观察者
+
+通过`removeObserver:forKeyPath:`消息来移除观察者。
+
+
+
+#### 自动通知
+
+默认情况下，使用`setter`为对象的属性设定值，会出发`KVO`。如果我们需要拦截，并控制发出通知的时机。可以选择手动通知。
+
+#### 手动通知
+
+选择手动通知，需要先关闭属性的自动通知。然后重写`setter`方法，自己控制消息的发出。
+
+```objc
++ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)theKey {
+ 
+    BOOL automatic = NO;
+    if ([theKey isEqualToString:@"openingBalance"]) {
+        automatic = NO;
+    }
+    else {
+        automatic = [super automaticallyNotifiesObserversForKey:theKey];
+    }
+    return automatic;
+}
+```
+
+```objc
+- (void)setOpeningBalance:(double)theBalance {
+    if (theBalance != _openingBalance) {
+        [self willChangeValueForKey:@"openingBalance"];
+        _openingBalance = theBalance;
+        [self didChangeValueForKey:@"openingBalance"];
+    }
+}
+```
+
+上面处理的情况是，一对一的影响，也可以通过注册依赖键。有一些属性的值取决于一个或者多个其他对象的属性值。一旦某个被依赖的属性值变了。依赖它的变化也要被通知。一对多的关系。也可以用`KVO`来解决。
+
+
+
+参考：
+
+[https://objccn.io/issue-7-3/](https://objccn.io/issue-7-3/)

@@ -83,3 +83,10 @@ view.layer.shadowRadius = radius;
 * 异步绘制
 * 缓存一切可以缓存的。
 
+
+
+
+参考：
+
+[http://blog.csdn.net/u011452278/article/details/60961350](http://blog.csdn.net/u011452278/article/details/60961350)
+

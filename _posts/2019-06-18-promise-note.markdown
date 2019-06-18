@@ -13,6 +13,8 @@ tags:
 
 
 
+**基本用法**
+
 ```
 var p = new Promise(function(resolve, reject) {
   // do some async stuff

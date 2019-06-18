@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      Promise
+title:      Promise notes
 subtitle:   
 date:       2019-06-18 16:52:00
 author:     hjfrun

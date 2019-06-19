@@ -8,6 +8,7 @@ header-img:
 catalog: false
 tags:
     -
+
 ---
 
 
@@ -187,6 +188,7 @@ Promise.all([runAsync1(), runAsync2(), runAsync3()])
 .then(function(results) {
   console.log(results);
 })
+
 ```
 
 执行结果：
@@ -196,6 +198,7 @@ Promise.all([runAsync1(), runAsync2(), runAsync3()])
 2 finished
 3 finished
 [ 'data 1', 'data 2', 'data 3' ]
+
 ```
 
 接收一组参数，里面的值最终都算返回`Promise`对象。这样，三个异步操作的并发执行的，等到他们都执行完后才会进到`then`里面。三个异步操作返回的数据都在`then`里面。`all`会把所有异步操作的结果放进一个数组中传递给`then`。就是上面的`results`。
@@ -209,6 +212,7 @@ Promise.race([runAsync1(), runAsync2(), runAsync3()])
 .then(function(results) {
   console.log(results);
 });
+
 ```
 
 谁跑得快，以谁的为准执行回调。结果如下：
@@ -218,6 +222,7 @@ Promise.race([runAsync1(), runAsync2(), runAsync3()])
 data 1
 2 finished
 3 finished
+
 ```
 
 

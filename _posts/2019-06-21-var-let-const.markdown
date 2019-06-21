@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      ES6
+title:      var & let & const
 subtitle:   
 date:       2019-06-21 16:02:00
 author:     hjfrun
@@ -233,7 +233,22 @@ console.log(window.ncz);				// "Hi"
 
 
 
+然而如果是在全局作用域上使用`let`或`const`，虽然在全局作用域上会创建新的绑定，但不会有任何属性被添加到全局对象上。这意味着不能使用`let`或`const`来覆盖一个全局变量，只能将其遮蔽。
 
+```javascript
+// 在浏览器中
+let RegExp = "Hello";
+console.log(RegExp);			// "Hello"
+console.log(window.RegExp === RegExp);		// false
+
+const ncz = "Hi";
+console.log(ncz);			// "Hi"
+console.log("ncz" in window);		// false
+```
+
+在ES6开发阶段。默认情况下：应当使用`let`来代替`var`。对于多数JS开发者来说，`let`的行为方式正是`var`本应有的方式，因此直接用`let`地台`var`更符合逻辑。在这种情况下，需要收到保护的变量再使用`const`。
+
+然而，一种替代方案变得更为流行：**在默认情况下使用`const`，仅当明确变量需要被更改时才只用`let`。依据是在大部分变量在初始化之后都保持不变。因为逾期外的改动是`bug`的源头之一。**
 
 
 

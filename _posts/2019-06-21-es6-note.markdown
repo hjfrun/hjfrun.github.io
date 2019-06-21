@@ -18,7 +18,7 @@ tags:
 
 使用`var`关键字声明的变量，无论其实际声明位置在何处，都会被视为声明于所在函数的顶部（如果声明不在任意函数内，则视为在全局作用域的顶部）。这就是变量提升（`hoisting`）。
 
-```
+```javascript
 function getValue(condition) {
 	if (condition) {
 		var value = "blue";
@@ -34,7 +34,7 @@ function getValue(condition) {
 
 实际上，`value`无论如何都会被创建。JS引擎会默默将`getValue`函数调整为如下形式：
 
-```
+```javascript
 function getVaue(condition) {
 	var value;
 	if (condition) {
@@ -63,6 +63,119 @@ function getVaue(condition) {
 
 
 **let声明**
+
+`let`声明的语法与`var`的语法一致。大体上可以用`let`代替`var`进行变量声明，但会将变量的作用域限制在当前代码块中。由于`let`声明并不会被提升，因此若想让变量在整个代码块内部都可用，需要手动将`let`声明放置到代码块顶部。
+
+```javascript
+function getValue(condition) {
+	if (condition) {
+		let value = "blue";
+		
+		return value;
+	} else {
+		// value is not accessable here
+		return null;
+	}
+	// value is not accessable here either
+}
+```
+
+这种写法的`getValue`函数的行为更接近其他类C语言。
+
+
+
+**禁止重复声明**
+
+如果一个标识符已经在代码块内部被定义，那么在此代码块内使用同一个标识符进行`let`声明就会导致错误。例如：
+
+```javascript
+var count = 30;
+
+// 语法错误
+let count = 40;
+```
+
+因为`let`不能在同一作用域内重复声明一个已有的标识符，此处的`let`声明就会抛出错误。然而，在嵌套的作用域内使用`let`声明一个同名新变量，就不会有问题：
+
+```javascript
+var count = 30;
+
+// 不会抛出异常
+if (condition) {
+  let count = 40;
+}
+```
+
+在`if`内部创建的新变量，这个新变量会屏蔽全局的`count`变量，从而在局部阻止对于后者的访问。
+
+
+
+**常量声明**
+
+在ES6中也可以使用`const`语法进行声明。使用`const`声明的变量会被认为是常量。
+
+```javascript
+// 有效的常量
+const maxItems = 30;
+// 语法错误:未进行初始化
+const name;
+```
+
+`maxItems`变量在声明时初始化，因此它的`const`声明是有效的。而`name`变量缺少了初始化操作。
+
+对比常量声明和`let`声明
+
+常量声明和`let`声明一样，都是块级声明。这意味着常量在声明他们的语句块之外都是无法被访问的，并且声明也不会被提升。
+
+```javascript
+if (condition) {
+  const maxItems = 5;	
+}
+
+// maxItems 在此处无法访问
+```
+
+
+
+`const`和`let`的另外一个相似点是：在同一作用域内定义一个已有变量会抛出错误。
+
+
+
+```javascript
+const person = {
+  name: "Nicholas"
+};
+
+// 工作正常
+person.name = "Greg";
+
+// 抛出错误
+person = {
+  name: "Greg"
+};
+```
+
+
+
+**循环中的块级绑定**
+
+```javascript
+for (var i = 0; i < 10; i++) {
+  process(items[i]);
+}
+
+// i在此处仍然可被访问
+console.log(i);			// 10
+```
+
+```javascript
+for (let i = 0; i < 10; i++) {
+  process(items[i]);
+}
+
+// i在此处不可访问
+console.log(i);
+```
 
 
 

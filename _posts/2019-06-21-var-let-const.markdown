@@ -179,5 +179,61 @@ console.log(i);
 
 
 
+**循环内的常量声明**
+
+```javascript
+var funcs = [];
+
+// 在一次迭代后抛出错误
+for (const i = 0; i < 10; i++) {
+  funcs.push(function() {
+    console.log(i);
+  });
+}
+```
+
+`const`在`for-in`或`for-of`循环中使用时，与`let`变量效果相同。
+
+```javascript
+var funcs = [],
+    object = {
+      a: true,
+      b: true,
+      c: true
+    };
+
+// 不会导致错误
+for (const key in object) {
+  funcs.push(function(){
+    console.log(key);
+  });
+}
+
+funcs.forEach(function(func) {
+  func();			// 依次输出'a', 'b', 'c'
+});
+```
+
+
+
+**全局块级绑定**
+
+`let`与`const`不同于`var`的另外一个方面是在全局作用于上的表现。当在全局作用域上使用`var`时，它会创建一个新的全局变量，并成为全局对象（在浏览器中是`window`）的一个属性。这意味着使用`var`可能会无意中覆盖一个已有的全局属性：
+
+```javascript
+// 在浏览器中
+var RegExp = "Hello";
+console.log(window.RegExp);			// "Hello"
+
+var ncz = "Hi";
+console.log(window.ncz);				// "Hi"
+```
+
+尽管全局的`RegExp`是定义在`window`上的，它仍然不能防止被`var`重写。在这个例子中`RegExp`覆盖了原有对象。`ncz`在定义为全局变量后就立即成为了`window`的一个属性。
+
+
+
+
+
 
 

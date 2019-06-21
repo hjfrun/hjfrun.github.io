@@ -1,0 +1,70 @@
+---
+layout:     post
+title:      ES6
+subtitle:   
+date:       2019-06-21 16:02:00
+author:     hjfrun
+header-img: 
+catalog: false
+tags:
+    - 
+---
+
+
+
+
+
+ **var声明与变量提升**
+
+使用`var`关键字声明的变量，无论其实际声明位置在何处，都会被视为声明于所在函数的顶部（如果声明不在任意函数内，则视为在全局作用域的顶部）。这就是变量提升（`hoisting`）。
+
+```
+function getValue(condition) {
+	if (condition) {
+		var value = "blue";
+		
+		return value;
+	} else {
+		// value can be accessed here, value is undefined
+		return null;
+	}
+	// value can also be acessed here, value is undefined
+}
+```
+
+实际上，`value`无论如何都会被创建。JS引擎会默默将`getValue`函数调整为如下形式：
+
+```
+function getVaue(condition) {
+	var value;
+	if (condition) {
+		value = "blue";
+		
+		return value;
+	} else {
+		return null;
+	}
+}
+```
+
+`value`变量的声明被提升到了函数顶部，而初始化操作则保留在了原处。这意味着`else`分支内`value`变量也是可以访问的，在此处它的值并未被初始化，因此是`undefined`。
+
+
+
+**块级声明**
+
+块级声明也就是让所有声明的变量在指定块的作用域外无法访问。块级作用域（又被称为词法作用域）在如下情况被创建：
+
+1. 在一个函数内部
+2. 在一个由一对花括号包裹的代码块内部
+
+块级作用域是很多类C语言的工作机制，ES6引入块级声明，是为了给JS添加灵活性，并保证与其他语言的一致性。
+
+
+
+**let声明**
+
+
+
+
+

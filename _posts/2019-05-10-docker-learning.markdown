@@ -15,10 +15,9 @@ tags:
 # Learning docker
 
 
-
 ## Part2: Container
 
-```
+``` bash
 docker build -t friendlyhello .  # Create image using this directory's Dockerfile
 docker run -p 4000:80 friendlyhello  # Run "friendlyhello" mapping port 4000 to 80
 docker run -d -p 4000:80 friendlyhello         # Same thing, but in detached mode
@@ -39,7 +38,7 @@ docker run username/repository:tag                   # Run image from a registry
 
 ## Part3: Services
 
-```
+``` bash
 docker swarm init
 docker stack deploy -c docker-compose.yml getstartedlab
 docker service ls
@@ -49,11 +48,9 @@ docker container ls -q
 docker stack ps
 
 docker stack deploy -c docker-compose.yml getstartedlab
-
-
 ```
 
-```
+``` bash
 docker stack ls                                            # List stacks or apps
 docker stack deploy -c <composefile> <appname>  # Run the specified Compose file
 docker service ls                 # List running services associated with an app

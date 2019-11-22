@@ -1,0 +1,32 @@
+---
+layout:     post
+title:      Vue Cli 笔记
+subtitle:   
+date:       2019-11-08 10:42:00
+author:     hjfrun
+header-img: 
+catalog: false
+tags:
+    - 
+---
+
+
+
+### 使用CLI2
+
+创建项目
+
+```bash
+vue init webpack mycli2proj
+```
+
+
+
+
+
+ 
+
+
+
+
+

@@ -28,6 +28,16 @@ yum update
 5. systemctl start docker.service
 ```
 
+## 安装Docker Compose
+
+1. `curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
+
+2. `chmod +x /usr/local/bin/docker-compose`
+
+3. `ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose`
+
+
+
 ## 安装Git
 
 ```bash

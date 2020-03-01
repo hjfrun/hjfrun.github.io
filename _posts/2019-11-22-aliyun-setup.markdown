@@ -46,6 +46,22 @@ yum install git
 
 
 
+## 安装NodeJS
+
+先要安装`wget`
+
+再安装`NodeJS`，执行以下命令：
+
+`wget https://nodejs.org/dist/v12.16.1/node-v12.16.1-linux-x64.tar.xz`
+
+要注意以上的版本在`NodeJS`的官方网站查看：`https://nodejs.org/dist/v12.16.1/`
+
+
+
+
+
+
+
  
 
 

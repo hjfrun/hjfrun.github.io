@@ -1,0 +1,75 @@
+---
+layout:     post
+title:      NodeJS 学习笔记 01
+subtitle:   
+date:       2020-03-02 17:34:00
+author:     hjfrun
+header-img: 
+catalog: true
+tags:
+    - NodeJS
+	- JS
+	- Node
+---
+
+
+
+
+
+## 第三方模块 nodemon
+
+命令行工具，用以辅助项目开发。
+
+```bash
+npm install nodemon -g
+```
+
+`-g`：表示全局安装
+
+使用`nodemon app.js`当文件每次修改保存的时候，自动更新输出的结果。
+
+
+
+## 第三方模块 nrm
+
+提高`npm` 安装速度，`npm`默认的下载地址在国外，国内下载很慢。安装：
+
+```bash
+npm install nrm -g
+```
+
+```bash
+列出所有下载地址
+nrm ls
+切换下载地址
+nrm use
+```
+
+
+
+## Gulp
+
+项目上线，文件压缩，语法转换，公共文件的抽离，文件浏览器的自动刷新。
+
+```bash
+npm install gulp
+```
+
+在根目录建立`gulpfile.js`
+
+
+
+## npm install
+
+`npm install -y`生成默认的`package.json`。
+
+`npm install --save-dev`安装开发依赖；
+
+`npm install --production`安装项目运行依赖；
+
+`package-lock.json`：记录文件依赖；
+
+
+
+
+

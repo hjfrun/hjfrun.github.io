@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      NodeJS 学习笔记 01
+title:      NodeJS-学习笔记-01
 subtitle:   
 date:       2020-03-02 17:34:00
 author:     hjfrun
@@ -13,6 +13,80 @@ tags:
 ---
 
 
+
+## 系统库
+
+### fs
+
+`fs`：文件系统
+
+`node`是错误优先的语言。错误的处理放在前面
+
+```javascript
+const fs = require('fs')
+```
+
+```javascript
+// 读文件
+const fs = require('fs')
+
+fs.readFile('01.js', 'utf-8', (err, doc) => {
+  if (err) console.log('read error')
+  console.log('doc', doc)
+})
+
+// 写文件
+const fs = require('fs')
+
+const content ='content to write';
+
+fs.writeFile('writefile.txt', content, err => {
+  if (err) {
+    console.log('err', err)
+    return
+  }
+  console.log('文件写入成功')
+})
+```
+
+
+
+### path
+
+`path`：路径拼接
+
+`__dirname`：当前文件的绝对路径；
+
+`__filename`：当前文件的文件名，包含绝对路径；
+
+```javascript
+const path = require('path')
+```
+
+```js
+// 简单拼接路径
+const path = require('path')
+
+const finalPath = path.join('public', 'uploads', 'avatar')
+
+console.log('final path: ', finalPath)
+```
+
+```js
+// 路径
+const path = require('path')
+const fs = require('fs')
+
+const filePath = path.join(__dirname, 'writefile.txt')
+console.log('filename: ', __filename)
+console.log('__dirname', __dirname)
+fs.readFile(filePath, 'utf8', (err, doc) => {
+  console.log('err:', err)
+  console.log('doc: ', doc)
+})
+
+// __dirname 当前目录的绝对路径
+```
 
 
 
@@ -70,6 +144,54 @@ npm install gulp
 `package-lock.json`：记录文件依赖；
 
 
+
+## 创建web服务器
+
+```javascript
+// 用于创建网站服务器的模块
+const http = require('http')
+
+// app对象就是网站服务器对象
+const app = http.createServer();
+
+// 当客户端有请求来的时候
+app.on('request', (req, res) => {
+  console.log('请求方式：', req.method)
+  if (req.method == 'POST') {
+    res.end('post')
+  } else if (req.method == 'GET') {
+    res.end('get')
+  }
+  res.end('other method')
+  // res.end('<h2>hello user</h2>')
+})
+
+// 开始监听端口
+app.listen(3001)
+console.log('网站服务器启动成功...')
+```
+
+
+
+```js
+app.on('request', (req, res) => {
+  req.headers // 获取请求报文
+  req.url     // 获取请求地址
+  req.method  // 获取请求方法
+  
+  if (req.url == '/index' || req.url == '/') {
+    res.end('Welcome to homepage')
+  } else if(req.url == '/list') {
+    res.end('Welcome to list')
+  } else {
+    res.end('not found')
+  }
+})
+
+
+```
+
+## 静态资源访问
 
 
 

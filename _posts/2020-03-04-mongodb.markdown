@@ -1,0 +1,28 @@
+---
+layout:     post
+title:      MongoDB使用
+subtitle:   
+date:       2020-03-04 11:53:00
+author:     hjfrun
+header-img: 
+catalog: true
+tags:
+    - MongoDB
+---
+
+
+
+### mongoDB 数据库导入数据
+
+```bash
+mongoimport -d 数据库名称 -c 集合名称 --file 要导入的数据文件
+```
+
+
+
+ 
+
+
+
+
+

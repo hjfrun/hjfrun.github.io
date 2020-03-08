@@ -98,6 +98,10 @@ service-worker: true
 # Friends
 friends: [
     {
+        title: "Joker",
+        href: "http://jokerhe.com"
+    },
+    {
         title: "吴迪",
         href: "http://vendyblog.cn/"
     },{
